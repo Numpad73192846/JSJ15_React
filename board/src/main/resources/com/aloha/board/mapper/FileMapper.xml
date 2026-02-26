@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.aloha.board.mapper.FileMapper">
+
+	<!-- 파일 목록 -->
+	<select id="list" resultType="Files">
+		SELECT * FROM files
+		ORDER BY created_at DESC
+	</select>
+
+	<!-- 부모 테이블 기준 파일 목록 -->
+	<select id="listByParent" resultType="Files">
+		SELECT * FROM files
+		WHERE p_id = #{pId}
+		ORDER BY created_at DESC
+	</select>
+
+	<select id="select" resultType="Files">
+		SELECT * FROM files
+		WHERE no = #{no}
+	</select>
+
+	<select id="selectById" resultType="Files">
+		SELECT * FROM files
+		WHERE id = #{id}
+	</select>
+
+	<insert id="insert" parameterType="Files" useGeneratedKeys="true" keyProperty="no">
+		INSERT INTO files (
+			id, p_id,
+			file_name, origin_name, file_path, file_size,
+			type, seq
+		)
+		VALUES (
+			#{id}, #{pId},
+			#{fileName}, #{originName}, #{filePath}, #{fileSize},
+			#{type}, #{seq}
+		)
+	</insert>
+
+	<update id="update">
+		UPDATE files
+		<set>
+			<if test="type != null">type = #{type},</if>
+			<if test="seq != null">seq = #{seq},</if>
+			<if test="pId != null">p_id = #{pId},</if>
+			<if test="fileName != null">file_name = #{fileName},</if>
+			<if test="originName != null">origin_name = #{originName},</if>
+			<if test="filePath != null">file_path = #{filePath},</if>
+			<if test="fileSize != null">file_size = #{fileSize},</if>
+			updated_at = now()
+		</set>
+		WHERE no = #{no}
+	</update>
+
+	<update id="updateById">
+		UPDATE files
+		<set>
+			<if test="type != null">type = #{type},</if>
+			<if test="seq != null">seq = #{seq},</if>
+			<if test="pId != null">p_id = #{pId},</if>
+			<if test="fileName != null">file_name = #{fileName},</if>
+			<if test="originName != null">origin_name = #{originName},</if>
+			<if test="filePath != null">file_path = #{filePath},</if>
+			<if test="fileSize != null">file_size = #{fileSize},</if>
+			updated_at = now()
+		</set>
+		WHERE id = #{id}
+	</update>
+
+	<delete id="delete">
+		DELETE FROM files
+		WHERE no = #{no}
+	</delete>
+
+	<delete id="deleteById">
+		DELETE FROM files
+		WHERE id = #{id}
+	</delete>
+
+	<!-- 부모 기준 파일 목록 삭제-->
+	<delete id="deleteByParent">
+		DELETE FROM files
+		WHERE p_id = #{pId}
+	</delete>
+
+	<!-- #{} vs ${} -->
+	<!-- #{변수명} ➡ '값' -->
+	<!-- ${변수명} ➡ 값 -->
+	<!-- 
+	1️⃣ String fileName = "강아지.png";
+		SELECT * FROM files
+		WHERE file_name = #{fileName}
+		⬇
+		SELECT * FROM files
+		WHERE file_name = '강아지.png'
+
+	2️⃣ String table = "files";
+		SELECT * FROM ${table}
+		⬇
+		SELECT * FROM files
+
+		SELECT * FROM #{table}
+		⬇
+		SELECT * FROM 'files'	(❌에러)
+	-->
+
+	<!-- 선택 삭제 - no (문자열 - IN) -->
+	<!--
+		String deleteNos = "1, 2, 3";
+		DELETE FROM files WHERE no IN ( #{deleteNos} )
+		⬇
+		DELETE FROM files WHERE no IN ( '1, 2, 3' )		: 값이 '1, 2, 3' 인 1건 삭제
+
+		DELETE FROM files WHERE no IN ( ${deleteNos} )
+		⬇
+		DELETE FROM files WHERE no IN ( 1, 2, 3 )		: 값이 1, 2, 3 인 3건 삭제
+	-->
+	<delete id="deleteFiles">
+		DELETE FROM files
+		WHERE no IN ( ${no} )		-- String no = "1, 2, 3";
+									-- no IN ( 1, 2, 3 )
+	</delete>
+
+	<delete id="deleteFilesById">
+		DELETE FROM files
+		WHERE id IN ( ${id} )		-- String id = "'ID1', 'ID2', 'ID3'";
+									-- id IN ( 'ID1', 'ID2', 'ID3' )
+	</delete>
+
+	<!-- 선택 삭제 - no (List 컬랙션)-->
+	<delete id="deleteFileList" parameterType="List">
+		DELETE FROM files
+		WHERE no IN
+			<foreach collection="noList" item="no" open="(" separator="," close=")">
+				#{no}
+			</foreach>
+			-- ( 1, 2, 3 )
+	</delete>
+
+	<!-- 선택 삭제 - id (List 컬랙션)-->
+	<delete id="deleteFileListById" parameterType="List">
+		DELETE FROM files
+		WHERE id IN
+			<foreach collection="idList" item="id" open="(" separator="," close=")">
+				#{id}
+			</foreach>
+			-- ( 'ID1', 'ID2', 'ID3' )
+	</delete>
+
+	<!-- 타입별 파일 조회 -->
+	<select id="selectByType" resultType="Files">
+		SELECT *
+		FROM files
+		WHERE p_id = #{pId}
+		  AND type = #{type}
+		LIMIT 0, 1
+	</select>
+
+	<!-- 타입별 파일 조회 -->
+	<select id="listByType" resultType="Files">
+		SELECT *
+		FROM files
+		WHERE p_id = #{pId}
+		  AND type = #{type}
+	</select>
+
+</mapper>

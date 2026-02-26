@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.aloha.board.mapper.BoardMapper">
+
+	<!-- resultMap -->
+	<resultMap type="Boards" id="BoardMap">
+		<id property="no" column="no" />
+		<result property="id" column="id" />
+		<result property="title" column="title" />
+		<result property="writer" column="writer" />
+		<result property="content" column="content" />
+		<result property="createdAt" column="created_at" />
+		<result property="updatedAt" column="updated_at" />
+
+		<association property="file" column="id" javaType="Files" select="selectMainFile"></association>
+		<collection property="fileList" column="id" ofType="Files" select="fileList"></collection>
+	</resultMap>
+
+	<select id="list" resultMap="BoardMap">
+		SELECT * FROM boards ORDER BY no DESC
+	</select>
+
+	<select id="select" resultMap="BoardMap">
+		SELECT * FROM boards WHERE no = #{no}
+	</select>
+
+	<select id="selectById" resultMap="BoardMap">
+		SELECT * FROM boards WHERE id = #{id}
+	</select>
+
+	<insert id="insert" parameterType="Boards" useGeneratedKeys="true" keyProperty="no">
+		INSERT INTO boards (id, title, content, writer )
+		VALUES (#{id}, #{title}, #{content}, #{writer} )
+	</insert>
+
+	<update id="update">
+		UPDATE boards
+		<set>
+			<if test="title != null">title = #{title},</if>
+			<if test="writer != null">writer = #{writer},</if>
+			<if test="content != null">content = #{content},</if>
+			updated_at = now()
+		</set>
+		WHERE no = #{no}
+	</update>
+
+	<update id="updateById">
+		UPDATE boards
+		<set>
+			<if test="title != null">title = #{title},</if>
+			<if test="writer != null">writer = #{writer},</if>
+			<if test="content != null">content = #{content},</if>
+			updated_at = now()
+		</set>
+		WHERE id = #{id}
+	</update>
+
+	<delete id="delete">
+		DELETE FROM boards WHERE no = #{no}
+	</delete>
+
+	<delete id="deleteById">
+		DELETE FROM boards WHERE id = #{id}
+	</delete>
+
+	<select id="selectMainFile" resultType="Files">
+		SELECT * FROM files
+		WHERE p_id = #{id}
+		  AND type = 'MAIN'
+		LIMIT 0, 1
+	</select>
+
+	<select id="fileList" resultType="Files">
+		SELECT * FROM files
+		WHERE p_id = #{id}
+		  AND type = 'SUB'
+	</select>
+
+</mapper>
