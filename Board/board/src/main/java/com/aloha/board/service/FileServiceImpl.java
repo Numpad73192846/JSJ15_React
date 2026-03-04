@@ -132,7 +132,7 @@ public class FileServiceImpl implements FileService {
 		long fileSize = multipartFile.getSize();
 		byte[] fileData = multipartFile.getBytes();
 		String fileName = UUID.randomUUID().toString() + "_" + originName;
-		String filePath = uploadPath = "/" + fileName;
+		String filePath = uploadPath + "/" + fileName;
 		File uploadFile = new File(filePath);
 		FileCopyUtils.copy(fileData, uploadFile);
 

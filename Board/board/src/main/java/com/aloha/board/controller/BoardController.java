@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -61,17 +62,30 @@ public class BoardController {
 	}
 	
 	@GetMapping("/{id}")
-	public ResponseEntity<?> getOne(@PathVariable("id") String id) {
+	public ResponseEntity<?> getOne(
+		@PathVariable("id") String id,
+		Files file
+	) {
 		try {
+			// 게시글
 			Boards board = boardService.selectById(id);
-			return new ResponseEntity<>(board, HttpStatus.OK);
+			file.setPId(id);
+
+			// 파일 목록
+			List<Files> fileList = fileService.listByParent(file);
+
+			Map<String, Object> response = new HashMap<>();
+			response.put("board", board);
+			response.put("fileList", fileList);
+
+			return new ResponseEntity<>(response, HttpStatus.OK);
 		} catch (Exception e) {
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 	
-	@PostMapping()
-	public ResponseEntity<?> create(@RequestBody Boards board) {
+	@PostMapping(value= "", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+	public ResponseEntity<?> create(Boards board) {
 		try {
 			boolean result = boardService.insert(board);
 			if ( result ) {
@@ -85,8 +99,76 @@ public class BoardController {
 		}
 	}
 	
-	@PutMapping()
-	public ResponseEntity<?> update(@RequestBody Boards board) {
+	/**
+	 * @RequestBody 붙일 때 안 붙일 때 차이
+	 * - @RequestBody ⭕ : application/json, application/xml, text/plain 등과 같이 HTTP 요청 본문에 담긴 데이터를 자바 객체로 변환하여 전달
+	 * - @RequestBody ❌ : application/x-www-form-urlencoded, multipart/form-data 등과 같이 HTTP 요청 본문에 담긴 데이터를 자바 객체로 변환하지 않고 전달
+	 * @param board
+	 * @return
+	 */
+	@PostMapping(value= "", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	public ResponseEntity<?> createMultipartForm(Boards board) {
+		try {
+			boolean result = boardService.insert(board);
+			if ( result ) {
+				return new ResponseEntity<>("SUCCESS", HttpStatus.CREATED);
+			}
+			else {
+				return new ResponseEntity<>("FAIL", HttpStatus.BAD_REQUEST);
+			}
+		} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+
+		
+	@PostMapping(value= "", consumes = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<?> createJson(@RequestBody Boards board) {
+		try {
+			boolean result = boardService.insert(board);
+			if ( result ) {
+				return new ResponseEntity<>("SUCCESS", HttpStatus.CREATED);
+			}
+			else {
+				return new ResponseEntity<>("FAIL", HttpStatus.BAD_REQUEST);
+			}
+		} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+
+	@PutMapping(value= "", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+	public ResponseEntity<?> update(Boards board) {
+		try {
+			boolean result = boardService.updateById(board);
+			if ( result ) {
+				return new ResponseEntity<>("SUCCESS", HttpStatus.OK);
+			}
+			else {
+				return new ResponseEntity<>("FAIL", HttpStatus.BAD_REQUEST);
+			}
+		} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+
+	@PutMapping(value = "", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	public ResponseEntity<?> updateMultipartForm(Boards board) {
+		try {
+			boolean result = boardService.updateById(board);
+			if ( result ) {
+				return new ResponseEntity<>("SUCCESS", HttpStatus.OK);
+			}
+			else {
+				return new ResponseEntity<>("FAIL", HttpStatus.BAD_REQUEST);
+			}
+		} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+
+	@PutMapping(value = "", consumes = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<?> updateJson(@RequestBody Boards board) {
 		try {
 			boolean result = boardService.updateById(board);
 			if ( result ) {
