@@ -166,10 +166,8 @@ const Insert = () => {
 								</div>
 							) : (
 								/* 드래그 & 드랍 */
-								<div>
-									<div onDragOver={handleDragOver} onDragLeave={handleDragLeave} onDrop={handleDrop} onClick={() => fileInputRef.current?.click()} className={`w-full h-28 border-2 border-dashed flex flex-col items-center justify-center gap-1 cursor-pointer transition-colors select-none ${isDragging ? 'border-blue-400 bg-blue-50' : 'border-gray-200 hover:border-blue-300 hover:bg-gray-50'}`}>
-										<ImageIcon size={22} className={isDragging ? 'text-blue-400' : 'text-gray-300'} />
-									</div>
+								<div onDragOver={handleDragOver} onDragLeave={handleDragLeave} onDrop={handleDrop} onClick={() => fileInputRef.current?.click()} className={`w-full h-28 border-2 border-dashed flex flex-col items-center justify-center gap-1 cursor-pointer transition-colors select-none ${isDragging ? 'border-blue-400 bg-blue-50' : 'border-gray-200 hover:border-blue-300 hover:bg-gray-50'}`}>
+									<ImageIcon size={22} className={isDragging ? 'text-blue-400' : 'text-gray-300'} />
 									<span className='text-xs text-gray-400'>
 										클릭하거나 파일을 드래그하세요
 									</span>
@@ -195,7 +193,7 @@ const Insert = () => {
 
 			{/* 버튼 */}
 			<div className='flex items-center justify-between gap-2 mt-6'>
-				<button type='button' className='px-4 py-2 w-full text-sm font---medium text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer'>
+				<button onClick={() => navigate('/boards')} type='button' className='px-4 py-2 w-full text-sm font---medium text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer'>
 					취소
 				</button>
 				<button type='submit' disabled={isInserting} className='px-4 py-2 w-full text-sm font---medium text-white bg-blue-500 rounded-lg hover:bg-blue-600 transition-colors cursor-pointer'>

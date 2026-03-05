@@ -49,11 +49,22 @@ export const useBoardMutations = (id) => {
 		}
 	})
 
+	// 단일 파일 삭제
+	const deleteFileMutation = useMutation({
+		mutationFn: ({ data, headers }) => boardsApi.deleteFile(data, headers),
+		onSuccess: async () => {
+			queryClient.invalidateQueries({ queryKey: ['board', id] })
+			await $alert('삭제 성공', '파일이 삭제되었습니다.', 'success')
+		}
+	})
+
 	return {
 		insertBoard: (data, headers) => insertMutation.mutate({ data, headers }),
 		updateBoard: (data, headers) => updateMutation.mutate({ data, headers }),
+		deleteFile: (data, headers) => deleteFileMutation.mutate({ data, headers }),
 		
 		isInserting: insertMutation.isPending,
 		isUpdating: updateMutation.isPending,
+		isDeletingFile: deleteFileMutation.isPending,
 	}
 }

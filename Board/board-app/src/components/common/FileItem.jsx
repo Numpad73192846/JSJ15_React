@@ -1,5 +1,6 @@
 import { Download, Trash2 } from 'lucide-react'
 import React from 'react'
+import { formatFileSize } from '../../utils/format'
 
 const FileItem = ({ file, onDownload, onDelete, selectable, checked, onCheck }) => {
   return (
@@ -23,7 +24,7 @@ const FileItem = ({ file, onDownload, onDelete, selectable, checked, onCheck }) 
 				{file.originName}
 			</p>
 			<p className='text-xs text-gray-400 mt-5'>
-				{file.fileSize}
+				{ formatFileSize(file.fileSize) }
 				{file.type == 'MAIN' && (
 					<span className='ml-2 inline-block px-1.5 p-0.5 text-xs bg-blue-500 text-white rounded'>
 						대표
