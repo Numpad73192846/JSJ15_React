@@ -1,9 +1,11 @@
 import React from 'react'
+import './UserForm.css'
 
 const UserForm = () => {
   return (
-	<div className="for">
-		<h2 className="login-title">
+	<div className="form">
+		<h2 className="login-title">회원 정보</h2>
+		<form className='login-form'>
 			<div>
 				<label htmlFor="username">username</label>
 				<input type="text" id="username" placeholder='username' autoComplete="username" required readOnly/>
@@ -27,7 +29,7 @@ const UserForm = () => {
 			<button className="btn btn--form btn-login">
 				회원 탈퇴
 			</button>
-		</h2>
+		</form>
 	</div>
   )
 }
