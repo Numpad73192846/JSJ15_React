@@ -2,7 +2,6 @@ package com.aloha.login.config;
 
 import java.util.Arrays;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -15,16 +14,19 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.reactive.CorsConfigurationSource;
-import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+
+
 
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity( prePostEnabled = true, securedEnabled = true )
 public class SecurityConfig {
 
+	// TODO:
 	// @Autowired private UserDetailsService userDetailsService;
 	// @Autowired private JwtProvider jwtProvider;
 	private AuthenticationManager authenticationManager;
@@ -37,6 +39,7 @@ public class SecurityConfig {
 
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+
 		http.formLogin(login -> login.disable());
 		http.httpBasic(basic -> basic.disable());
 		http.csrf(csrf -> csrf.disable());
@@ -55,10 +58,10 @@ public class SecurityConfig {
 			.anyRequest().permitAll()
 		);
 
-		// TODO: JWT 인증 필터 추가
+		// TODO:
 		// http.userDetailsService( userDetailServiceImpl );
 		// http.addFilterAt( new JwtAuthenticationFilter(authenticationManager, jwtProvider), UsernamePasswordAuthenticationFilter.class )
-		// 	.addFilterBefore(new JwtRequestFilter(authenticationManager, jwtProvider), UsernamePasswordAuthenticationFilter.class);
+		// 	   .addFilterBefore(new JwtRequestFilter(authenticationManager, jwtProvider), UsernamePasswordAuthenticationFilter.class);
 		return http.build();
 	}
 
