@@ -30,7 +30,6 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 		HttpServletResponse response,
 		FilterChain filterChain
 	) throws ServletException, IOException {
-		throw new UnsupportedOperationException("Unimplemented method 'doFilterInternal'");
 		String authorization = request.getHeader( SecurityConstants.TOKEN_HEADER );
 		log.info("authorization : " + authorization);
 

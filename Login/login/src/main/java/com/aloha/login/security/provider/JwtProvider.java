@@ -12,6 +12,10 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
+import com.aloha.login.domain.CustomUser;
+import com.aloha.login.domain.UserAuth;
+import com.aloha.login.domain.Users;
+import com.aloha.login.mapper.UserMapper;
 import com.aloha.login.security.constants.SecurityConstants;
 import com.aloha.login.security.props.JwtProps;
 
@@ -22,6 +26,7 @@ import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.UnsupportedJwtException;
+import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -97,7 +102,7 @@ public class JwtProvider {
 																			 .build()
 															)
 													   .collect( Collectors.toList() );
-			user.setAuthLIst(authList);
+			user.setAuthList(authList);
 
 			List<SimpleGrantedAuthority> authorities = ((List<?>) roles).stream()
 																		.map( auth -> new SimpleGrantedAuthority(auth.toString()))
@@ -159,5 +164,16 @@ public class JwtProvider {
 		}
 
 		return false;
+	}
+
+	/**
+	 * 시크릿 키
+	 * @return
+	 */
+	public SecretKey getShaKey() {
+		String secretKey = jwtProps.getSecretKey();
+		byte[] signingKey = secretKey.getBytes();
+		SecretKey shaKey = Keys.hmacShaKeyFor(signingKey);
+		return shaKey;
 	}
 }

@@ -6,12 +6,15 @@ import java.util.stream.Collectors;
 
 import javax.crypto.SecretKey;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
+import com.aloha.login.domain.CustomUser;
+import com.aloha.login.domain.UserAuth;
+import com.aloha.login.domain.Users;
+import com.aloha.login.mapper.UserMapper;
 import com.aloha.login.security.constants.SecurityConstants;
 import com.aloha.login.security.props.JwtProps;
 
@@ -23,16 +26,15 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.security.Keys;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class JwtProvider {
 	
-	@Autowired
 	private JwtProps jwtProps;
-
-	@Autowired
 	private UserMapper userMapper;
 
 	public String createToken(String id, String username, List<String> roles) {

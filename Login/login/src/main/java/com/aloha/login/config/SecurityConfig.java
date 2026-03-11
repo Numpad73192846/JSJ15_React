@@ -2,6 +2,7 @@ package com.aloha.login.config;
 
 import java.util.Arrays;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -11,12 +12,18 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import com.aloha.login.filter.JwtAuthenticationFilter;
+import com.aloha.login.filter.JwtRequestFilter;
+import com.aloha.login.provider.JwtProvider;
 
 
 
@@ -27,8 +34,8 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 public class SecurityConfig {
 
 	// TODO:
-	// @Autowired private UserDetailsService userDetailsService;
-	// @Autowired private JwtProvider jwtProvider;
+	@Autowired private UserDetailsService userDetailsService;
+	@Autowired private JwtProvider jwtProvider;
 	private AuthenticationManager authenticationManager;
 
 	@Bean
@@ -59,9 +66,13 @@ public class SecurityConfig {
 		);
 
 		// TODO:
-		// http.userDetailsService( userDetailServiceImpl );
-		// http.addFilterAt( new JwtAuthenticationFilter(authenticationManager, jwtProvider), UsernamePasswordAuthenticationFilter.class )
-		// 	   .addFilterBefore(new JwtRequestFilter(authenticationManager, jwtProvider), UsernamePasswordAuthenticationFilter.class);
+		http.userDetailsService( userDetailsService );
+
+		JwtAuthenticationFilter jwtAuthenticationFilter = new JwtAuthenticationFilter(authenticationManager, jwtProvider);
+		JwtRequestFilter jwtRequestFilter = new JwtRequestFilter(authenticationManager, jwtProvider);
+
+		http.addFilterAt( jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+			.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
 		return http.build();
 	}
 
